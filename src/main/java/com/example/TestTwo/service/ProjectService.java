@@ -1,6 +1,7 @@
 package com.example.TestTwo.service;
 
 import com.example.TestTwo.model.Project;
+import com.example.TestTwo.model.Project;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -21,5 +22,22 @@ public class ProjectService {
 
     public void removeProject(String name) {
         projects.remove(name);
+    }
+
+    public Project updateProject(String name, Project updates){
+        Project existingProject = getProject(name);
+        if (existingProject == null) {
+            return null;
+        }
+        if (updates.getName() != null) {
+            existingProject.setName(updates.getName());
+        }
+        if (updates.getDescription() != null) {
+            existingProject.setDescription(updates.getDescription());
+        }
+        if (updates.getStatus() != null) {
+            existingProject.setStatus(updates.getStatus());
+        }
+        return existingProject;
     }
 }

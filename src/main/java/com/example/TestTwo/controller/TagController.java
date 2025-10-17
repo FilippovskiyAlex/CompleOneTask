@@ -1,6 +1,7 @@
 package com.example.TestTwo.controller;
 
 import com.example.TestTwo.model.Tag;
+import com.example.TestTwo.model.Tag;
 import com.example.TestTwo.service.TagService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
@@ -44,5 +45,17 @@ public class TagController {
             @PathVariable String name){
         tagService.removeTag(name);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/by-name/{name}")
+    public ResponseEntity<Tag> patchTag(
+            @PathVariable String name,
+            @RequestBody Tag userUpdates) {
+
+        Tag updatedTag = tagService.updateTag(name, userUpdates);
+        if (updatedTag == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updatedTag);
     }
 }

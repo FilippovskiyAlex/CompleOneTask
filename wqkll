@@ -1,0 +1,54 @@
+[33mcommit cf775b3f7d5c948f84a11e2b180f2cfe7ab883e6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Alex <a.d.filippovskiy@edu.mtuci.ru>
+Date:   Sat Oct 4 16:39:25 2025 +0300
+
+    Fixed pomXML
+
+[1mdiff --git a/pom.xml b/pom.xml[m
+[1mindex 6ebdf83..f6048cd 100644[m
+[1m--- a/pom.xml[m
+[1m+++ b/pom.xml[m
+[36m@@ -34,16 +34,21 @@[m
+ 	</properties>[m
+ [m
+ 	<dependencies>[m
+[31m-		<dependency>[m
+[31m-			<groupId>org.springframework.boot</groupId>[m
+[31m-			<artifactId>spring-boot-starter</artifactId>[m
+[31m-		</dependency>[m
+[32m+[m[32m        <dependency>[m
+[32m+[m[32m            <groupId>org.springframework.boot</groupId>[m
+[32m+[m[32m            <artifactId>spring-boot-starter-web</artifactId>[m
+[32m+[m[32m        </dependency>[m
+[32m+[m
+[32m+[m[32m        <dependency>[m
+[32m+[m[32m            <groupId>org.springframework.boot</groupId>[m
+[32m+[m[32m            <artifactId>spring-boot-starter-thymeleaf</artifactId>[m
+[32m+[m[32m        </dependency>[m
+ [m
+[31m-		<dependency>[m
+[31m-			<groupId>org.springframework.boot</groupId>[m
+[31m-			<artifactId>spring-boot-starter-test</artifactId>[m
+[31m-			<scope>test</scope>[m
+[31m-		</dependency>[m
+[32m+[m[32m        <dependency>[m
+[32m+[m[32m            <groupId>org.springframework.boot</groupId>[m
+[32m+[m[32m            <artifactId>spring-boot-starter-test</artifactId>[m
+[32m+[m[32m            <scope>test</scope>[m
+[32m+[m[32m        </dependency>[m
+ [m
+         <dependency>[m
+             <groupId>org.projectlombok</groupId>[m
+[1mdiff --git a/src/main/java/com/example/TestTwo/controller/OpenTestController.java b/src/main/java/com/example/TestTwo/controller/OpenTestController.java[m
+[1mindex 07edf3d..3c75e0d 100644[m
+[1m--- a/src/main/java/com/example/TestTwo/controller/OpenTestController.java[m
+[1m+++ b/src/main/java/com/example/TestTwo/controller/OpenTestController.java[m
+[36m@@ -9,7 +9,7 @@[m [mpublic class OpenTestController {[m
+ [m
+     @GetMapping("/")[m
+     public String greeting() {[m
+[31m-        return "test.html";[m
+[32m+[m[32m        return "test";[m
+     }[m
+ [m
+ [m

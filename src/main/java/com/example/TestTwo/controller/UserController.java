@@ -45,4 +45,15 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/by-name/{name}")
+    public ResponseEntity<User> patchUser(
+            @PathVariable String name,
+            @RequestBody User userUpdates) {
+
+        User updatedUser = userService.updateUser(name, userUpdates);
+        if (updatedUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updatedUser);
+    }
 }

@@ -52,4 +52,15 @@ public class ProjectController {
         projectService.removeProject(name);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/by-name/{name}")
+    public ResponseEntity<Project> patchProject(
+            @PathVariable String name,
+            @RequestBody Project projectUpdates) {
+        Project updateProject = projectService.updateProject(name, projectUpdates);
+        if (updateProject == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updateProject);
+    }
 }

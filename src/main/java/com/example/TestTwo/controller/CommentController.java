@@ -18,13 +18,13 @@ import static org.springframework.http.HttpStatus.CREATED;
 @RequestMapping("/comments")
 @RequiredArgsConstructor
 public class CommentController {
-    private final CommentService сommentService;
+    private final CommentService commentService;
     private final UserService userService;
 
     @GetMapping
     public ResponseEntity<Comment> getComment(
             @RequestParam @Size(min = 3, max = 255) String name) {
-        Comment comment = сommentService.getComment(userService.getUser(name));
+        Comment comment = commentService.getComment(userService.getUser(name));
         if (comment == null) {
             return ResponseEntity.notFound().build();
         }
@@ -41,7 +41,7 @@ public class CommentController {
             return ResponseEntity.notFound().build();
         }
         comment.setAuthor(Author);
-        сommentService.addComment(comment);
+        commentService.addComment(comment);
         return ResponseEntity
                 .status(CREATED)
                 .header("X-COMMENT-ID", comment.getAuthor().getEmail())
@@ -51,7 +51,24 @@ public class CommentController {
     @DeleteMapping("/by-name/{name}")
     public ResponseEntity<Void> removeComment(
             @PathVariable String name){
-        сommentService.removeComment(userService.getUser(name));
+        commentService.removeComment(userService.getUser(name));
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/by-name/{name}")
+    public ResponseEntity<Comment> patchComment(
+            @PathVariable String author,
+            @RequestBody Comment commentUpdates) {
+        User Author = userService.getUser(author);
+        if (Author == null) {
+            return ResponseEntity.notFound().build();
+        }
+        Comment updateComment = commentService.updateComment(Author, commentUpdates);
+
+        if (updateComment == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updateComment);
+    }
+
 }

@@ -67,4 +67,15 @@ public class TaskController {
         taskService.removeTask(name);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/by-name/{name}")
+    public ResponseEntity<Task> patchTask(
+            @PathVariable String name,
+            @RequestBody Task taskUpdates) {
+        Task updatedTask = taskService.updateTask(name, taskUpdates);
+        if (updatedTask == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updatedTask);
+    }
 }

@@ -24,5 +24,21 @@ public class CommentService {
     public void removeComment(User author) {
         comments.remove(author);
     }
-    
+
+    public Comment updateComment(User author, Comment updates){
+        Comment existingComment = getComment(author);
+        if (existingComment == null) {
+            return null;
+        }
+        if (updates.getDescription() != null) {
+            existingComment.setDescription(updates.getDescription());
+        }
+        if (updates.getAuthor() != null) {
+            existingComment.setAuthor(updates.getAuthor());
+        }
+        if (updates.getDate() != null) {
+            existingComment.setDate(updates.getDate());
+        }
+        return existingComment;
+    }
 }

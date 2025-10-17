@@ -2,6 +2,7 @@ package com.example.TestTwo.service;
 
 
 import com.example.TestTwo.model.Tag;
+import com.example.TestTwo.model.Tag;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -22,5 +23,19 @@ public class TagService {
 
     public void removeTag(String name) {
         tags.remove(name);
+    }
+
+    public Tag updateTag(String name, Tag updates){
+        Tag existingTag = getTag(name);
+        if (existingTag == null) {
+            return null;
+        }
+        if (updates.getName() != null) {
+            existingTag.setName(updates.getName());
+        }
+        if (updates.getDescription() != null) {
+            existingTag.setDescription(updates.getDescription());
+        }
+        return existingTag;
     }
 }
