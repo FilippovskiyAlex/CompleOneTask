@@ -2,33 +2,33 @@ package com.example.TestTwo.model;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Data
-public class Task {
+public class TaskDto {
     @NotBlank
     private String name;
 
-    @Valid
-    private Map<String, User> workers = new HashMap<>();
+    private List<String> workers = new ArrayList<>();
 
-    @Valid
-    private Map<String, Comment> comments = new HashMap<>();
+    private Map<String, String> comments = new HashMap<>();
 
-    @Valid
-    private Tag tag;
+    private String tag;
 
-    @Valid
     private Status status;
+
+    private String project;
 
     @DateTimeFormat(pattern = "dd.MM.yyyy")
     @NotBlank
     private String dateStart;
 
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
     private String dateEnd;
 }

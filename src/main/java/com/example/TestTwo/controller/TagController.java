@@ -1,8 +1,9 @@
 package com.example.TestTwo.controller;
 
-import com.example.TestTwo.model.Tag;
-import com.example.TestTwo.model.Tag;
+import com.example.TestTwo.entity.TagEntity;
+import com.example.TestTwo.model.TagDto;
 import com.example.TestTwo.service.TagService;
+import com.example.TestTwo.util.MappingUtils;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import lombok.NonNull;
@@ -17,27 +18,28 @@ import static org.springframework.http.HttpStatus.CREATED;
 @RequiredArgsConstructor
 public class TagController {
     private final TagService tagService;
+    private final MappingUtils mappingUtils;
 
     @GetMapping
-    public ResponseEntity<Tag> getTag(
+    public ResponseEntity<TagDto> getTag(
             @RequestParam @Size(min = 3, max = 255) String name) {
-        Tag tag = tagService.getTag(name);
+        TagEntity tag = tagService.getTag(name);
         if (tag == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity
                 .ok()
-                .body(tag);
+                .body(mappingUtils.toDto(tag));
     }
 
     @PostMapping
-    public ResponseEntity<Tag> addTag(
-            @Valid @RequestBody @NonNull Tag tag,
+    public ResponseEntity<TagDto> addTag(
+            @Valid @RequestBody @NonNull TagDto tag,
             @RequestHeader("X-TAG-ID") String id) {
         return ResponseEntity
                 .status(CREATED)
                 .header("X-TAG-ID")
-                .body(tagService.addTag(tag));
+                .body(mappingUtils.toDto(tagService.addTag(tag)));
     }
 
     @DeleteMapping("/by-name/{name}")
@@ -48,14 +50,14 @@ public class TagController {
     }
 
     @PatchMapping("/by-name/{name}")
-    public ResponseEntity<Tag> patchTag(
+    public ResponseEntity<TagDto> patchTag(
             @PathVariable String name,
-            @RequestBody Tag userUpdates) {
+            @RequestBody TagDto userUpdates) {
 
-        Tag updatedTag = tagService.updateTag(name, userUpdates);
+        TagEntity updatedTag = tagService.updateTag(name, userUpdates);
         if (updatedTag == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(updatedTag);
+        return ResponseEntity.ok(mappingUtils.toDto(updatedTag));
     }
 }

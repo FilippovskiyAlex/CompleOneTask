@@ -1,13 +1,15 @@
 package com.example.TestTwo.controller;
 
-import com.example.TestTwo.model.Comment;
-import com.example.TestTwo.model.Tag;
-import com.example.TestTwo.model.Task;
-import com.example.TestTwo.model.User;
+import com.example.TestTwo.entity.TaskEntity;
+import com.example.TestTwo.model.CommentDto;
+import com.example.TestTwo.model.TagDto;
+import com.example.TestTwo.model.TaskDto;
+import com.example.TestTwo.model.UserDto;
 import com.example.TestTwo.service.CommentService;
 import com.example.TestTwo.service.TagService;
 import com.example.TestTwo.service.TaskService;
 import com.example.TestTwo.service.UserService;
+import com.example.TestTwo.util.MappingUtils;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import lombok.NonNull;
@@ -15,52 +17,36 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @RequestMapping("/tasks")
 @RequiredArgsConstructor
 public class TaskController {
-    private final CommentService сommentService;
-    private final UserService userService;
-    private final TagService tagService;
     private final TaskService taskService;
+    private final MappingUtils mappingUtils;
 
     @GetMapping
-    public ResponseEntity<Task> getTask(
+    public ResponseEntity<TaskDto> getTask(
             @RequestParam @Size(min = 3, max = 255) String name) {
-        Task task = taskService.getTask(name);
+        TaskEntity task = taskService.getTask(name);
+
         if (task == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok().body(task);
+        return ResponseEntity.ok().body(mappingUtils.toDto(task));
     }
 
     @PostMapping
-    public ResponseEntity<Task> addTask(
-            @Valid @RequestBody @NonNull Task task,
-            @RequestHeader("X-TASK-ID") String id,
-            @RequestParam String worker,
-            @RequestParam String author,
-            @RequestParam String tag){
-        User Author = userService.getUser(author);
-        User Worker = userService.getUser(worker);
-        Comment Comment = сommentService.getComment(Author);
-        Tag Tag = tagService.getTag(tag);
-        if (Author == null || Worker == null || Tag == null || Comment == null){
-            return ResponseEntity.notFound().build();
-        }
-        task.setTag(Tag);
-        task.getWorkers().put(worker, Worker);
-        task.getComments().put(author, Comment);
-        taskService.addTask(task);
+    public ResponseEntity<TaskDto> addTask(
+            @Valid @RequestBody @NonNull TaskDto task,
+            @RequestHeader("X-TASK-ID") String id){
         return ResponseEntity
                 .status(CREATED)
                 .header("X-TASK-ID", task.getName())
-                .body(task);
+                .body(mappingUtils.toDto(taskService.addTask(task)));
     }
+
     @DeleteMapping("/by-name/{name}")
     public ResponseEntity<Void> removeTask(
             @PathVariable String name){
@@ -69,13 +55,13 @@ public class TaskController {
     }
 
     @PatchMapping("/by-name/{name}")
-    public ResponseEntity<Task> patchTask(
+    public ResponseEntity<TaskDto> patchTask(
             @PathVariable String name,
-            @RequestBody Task taskUpdates) {
-        Task updatedTask = taskService.updateTask(name, taskUpdates);
+            @RequestBody TaskDto taskUpdates) {
+        TaskEntity updatedTask = taskService.updateTask(name, taskUpdates);
         if (updatedTask == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(updatedTask);
+        return ResponseEntity.ok(mappingUtils.toDto(updatedTask));
     }
 }

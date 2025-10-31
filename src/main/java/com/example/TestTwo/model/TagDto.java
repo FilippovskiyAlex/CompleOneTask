@@ -1,13 +1,12 @@
 package com.example.TestTwo.model;
 
-import lombok.Data;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
 @Data
-public class User {
+public class TagDto {
     @NotBlank
     private String name;
-    @Email
-    private String email;
+    @NotBlank
+    private String description;
 }

@@ -1,41 +1,47 @@
 package com.example.TestTwo.service;
 
-import com.example.TestTwo.model.User;
+import com.example.TestTwo.entity.UserEntity;
+import com.example.TestTwo.model.UserDto;
+import com.example.TestTwo.repository.UserRepository;
+import com.example.TestTwo.util.MappingUtils;
+import org.springframework.transaction.annotation.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-
-import java.util.HashMap;
-import java.util.Map;
-
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    private final Map<String, User> users = new HashMap<>();
+    private final UserRepository userRepository;
+    private final MappingUtils mapping;
 
-    public User getUser(String name) {
-        return users.get(name);
+
+    public UserEntity getUser(String name) {
+        return userRepository.findByName(name);
     }
 
-    public User addUser(User user) {
-        users.put(user.getName(), user);
-        return users.get(user.getName());
+    @Transactional
+    public UserEntity addUser(UserDto dto) {
+        UserEntity entity = mapping.toEntity(dto);
+        return userRepository.save(entity);
     }
 
+    @Transactional
     public void removeUser(String name) {
-        users.remove(name);
+        userRepository.deleteByName(name);
     }
 
-    public User updateUser(String name, User updates){
-        User existingUser = getUser(name);
-        if (existingUser == null) {
-            return null;
-        }
+    @Transactional
+    public UserEntity updateUser(String name, UserDto dto) {
+        UserEntity existing = userRepository.findByName(name);
+        UserEntity updates = mapping.toEntity(dto);
         if (updates.getName() != null) {
-            existingUser.setName(updates.getName());
+            existing.setName(updates.getName());
         }
-        if (updates.getEmail() != null) {
-            existingUser.setEmail(updates.getEmail());
+        if (updates.getEmail() != null){
+            existing.setEmail(updates.getEmail());
         }
-        return existingUser;
+        return userRepository.save(existing);
     }
+
 }

@@ -1,7 +1,9 @@
 package com.example.TestTwo.controller;
 
-import com.example.TestTwo.model.User;
+import com.example.TestTwo.entity.UserEntity;
+import com.example.TestTwo.model.UserDto;
 import com.example.TestTwo.service.UserService;
+import com.example.TestTwo.util.MappingUtils;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import lombok.NonNull;
@@ -17,25 +19,26 @@ import static org.springframework.http.HttpStatus.CREATED;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final MappingUtils mappingUtils;
 
     @GetMapping
-    public ResponseEntity<User> getUser(
+    public ResponseEntity<UserDto> getUser(
             @RequestParam @Size(min = 3, max = 255) String name) {
-        User user = userService.getUser(name);
+        UserEntity user = userService.getUser(name);
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok().body(user);
+        return ResponseEntity.ok().body(mappingUtils.toDto(user));
     }
 
     @PostMapping
-    public ResponseEntity<User> addUser(
-            @Valid @RequestBody @NonNull User user,
+    public ResponseEntity<UserDto> addUser(
+            @Valid @RequestBody @NonNull UserDto user,
             @RequestHeader("X-USER-ID") String id) {
         return ResponseEntity
                 .status(CREATED)
                 .header("X-USER-ID", user.getEmail())
-                .body(userService.addUser(user));
+                .body(mappingUtils.toDto(userService.addUser(user)));
     }
 
     @DeleteMapping("/by-name/{name}")
@@ -46,14 +49,14 @@ public class UserController {
     }
 
     @PatchMapping("/by-name/{name}")
-    public ResponseEntity<User> patchUser(
+    public ResponseEntity<UserDto> patchUser(
             @PathVariable String name,
-            @RequestBody User userUpdates) {
+            @RequestBody UserDto userUpdates) {
 
-        User updatedUser = userService.updateUser(name, userUpdates);
+        UserEntity updatedUser = userService.updateUser(name, userUpdates);
         if (updatedUser == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(updatedUser);
+        return ResponseEntity.ok(mappingUtils.toDto(updatedUser));
     }
 }
