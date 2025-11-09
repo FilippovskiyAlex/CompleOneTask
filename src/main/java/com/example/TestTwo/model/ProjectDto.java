@@ -1,13 +1,11 @@
 package com.example.TestTwo.model;
 
-import jakarta.validation.Valid;
+import com.example.TestTwo.model.enums.Status;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Data
 public class ProjectDto {

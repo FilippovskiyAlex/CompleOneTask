@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -21,6 +22,7 @@ public class TagController {
     private final MappingUtils mappingUtils;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('read')")
     public ResponseEntity<TagDto> getTag(
             @RequestParam @Size(min = 3, max = 255) String name) {
         TagEntity tag = tagService.getTag(name);
@@ -33,6 +35,7 @@ public class TagController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('create')")
     public ResponseEntity<TagDto> addTag(
             @Valid @RequestBody @NonNull TagDto tag,
             @RequestHeader("X-TAG-ID") String id) {
@@ -43,6 +46,7 @@ public class TagController {
     }
 
     @DeleteMapping("/by-name/{name}")
+    @PreAuthorize("hasAuthority('delete')")
     public ResponseEntity<Void> removeTag(
             @PathVariable String name){
         tagService.removeTag(name);
@@ -50,6 +54,7 @@ public class TagController {
     }
 
     @PatchMapping("/by-name/{name}")
+    @PreAuthorize("hasAuthority('update')")
     public ResponseEntity<TagDto> patchTag(
             @PathVariable String name,
             @RequestBody TagDto userUpdates) {

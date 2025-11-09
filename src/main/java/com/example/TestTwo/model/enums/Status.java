@@ -1,4 +1,4 @@
-package com.example.TestTwo.model;
+package com.example.TestTwo.model.enums;
 
 public enum Status {
     OPEN,

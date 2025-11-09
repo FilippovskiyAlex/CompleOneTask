@@ -1,6 +1,6 @@
 package com.example.TestTwo.entity;
 
-import com.example.TestTwo.model.Status;
+import com.example.TestTwo.model.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

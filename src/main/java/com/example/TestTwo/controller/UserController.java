@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -22,6 +23,7 @@ public class UserController {
     private final MappingUtils mappingUtils;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('read')")
     public ResponseEntity<UserDto> getUser(
             @RequestParam @Size(min = 3, max = 255) String name) {
         UserEntity user = userService.getUser(name);
@@ -32,6 +34,7 @@ public class UserController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('create')")
     public ResponseEntity<UserDto> addUser(
             @Valid @RequestBody @NonNull UserDto user,
             @RequestHeader("X-USER-ID") String id) {
@@ -42,6 +45,7 @@ public class UserController {
     }
 
     @DeleteMapping("/by-name/{name}")
+    @PreAuthorize("hasAuthority('delete')")
     public ResponseEntity<Void> removeUser(
             @PathVariable String name){
         userService.removeUser(name);
@@ -49,6 +53,7 @@ public class UserController {
     }
 
     @PatchMapping("/by-name/{name}")
+    @PreAuthorize("hasAuthority('update')")
     public ResponseEntity<UserDto> patchUser(
             @PathVariable String name,
             @RequestBody UserDto userUpdates) {

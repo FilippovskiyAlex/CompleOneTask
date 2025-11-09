@@ -1,7 +1,7 @@
 package com.example.TestTwo.service;
 
 import com.example.TestTwo.entity.*;
-import com.example.TestTwo.model.Status;
+import com.example.TestTwo.model.enums.Status;
 import com.example.TestTwo.repository.CommentRepository;
 import com.example.TestTwo.repository.ProjectRepository;
 import com.example.TestTwo.repository.TagRepository;

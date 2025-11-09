@@ -3,7 +3,6 @@ package com.example.TestTwo.controller;
 import com.example.TestTwo.entity.CommentEntity;
 import com.example.TestTwo.entity.TaskEntity;
 import com.example.TestTwo.model.CommentDto;
-import com.example.TestTwo.model.Status;
 import com.example.TestTwo.model.TaskDto;
 import com.example.TestTwo.model.TaskFilterDto;
 import com.example.TestTwo.service.BusinessProcessService;
@@ -13,6 +12,7 @@ import com.example.TestTwo.util.MappingUtils;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -32,6 +32,7 @@ public class BusinessProcessController {
 
     // Получение группы комментариев по автору
     @GetMapping("/get-comment-by-author")
+    @PreAuthorize("hasAuthority('read')")
     public ResponseEntity<List<CommentDto>> getComment(
             @RequestParam @Size(min = 3, max = 255) String name) {
 
@@ -48,6 +49,7 @@ public class BusinessProcessController {
 
     // Фильтрация задач по тегам, статусу и проекту (через тело запроса)
     @PostMapping("/filter-tasks")
+    @PreAuthorize("hasAuthority('create')")
     public ResponseEntity<List<TaskDto>> filterTasks(
             @RequestBody TaskFilterDto filterRequest) {
 
@@ -70,6 +72,7 @@ public class BusinessProcessController {
 
     // Анализ длительности проекта
     @GetMapping("/project-duration")
+    @PreAuthorize("hasAuthority('read')")
     public ResponseEntity<String> getProjectDuration(
             @RequestParam @Size(min = 1, max = 255) String projectName) {
 
@@ -90,6 +93,7 @@ public class BusinessProcessController {
 
     // Перенос задач между проектами
     @PostMapping("/transfer-tasks")
+    @PreAuthorize("hasAuthority('create')")
     public ResponseEntity<String> transferTasks(
             @RequestParam List<String> tasksName,
             @RequestParam String projectName) {
@@ -113,6 +117,7 @@ public class BusinessProcessController {
 
     // Массовое назначение тега задачам
     @PostMapping("/set-tag-to-tasks")
+    @PreAuthorize("hasAuthority('create')")
     public ResponseEntity<String> setTagToTasks(
             @RequestParam List<String> tasksName,
             @RequestParam String tagName) {

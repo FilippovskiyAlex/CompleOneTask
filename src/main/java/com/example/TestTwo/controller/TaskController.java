@@ -15,6 +15,7 @@ import jakarta.validation.constraints.Size;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -27,6 +28,7 @@ public class TaskController {
     private final MappingUtils mappingUtils;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('read')")
     public ResponseEntity<TaskDto> getTask(
             @RequestParam @Size(min = 3, max = 255) String name) {
         TaskEntity task = taskService.getTask(name);
@@ -38,6 +40,7 @@ public class TaskController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('create')")
     public ResponseEntity<TaskDto> addTask(
             @Valid @RequestBody @NonNull TaskDto task,
             @RequestHeader("X-TASK-ID") String id){
@@ -48,6 +51,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/by-name/{name}")
+    @PreAuthorize("hasAuthority('delete')")
     public ResponseEntity<Void> removeTask(
             @PathVariable String name){
         taskService.removeTask(name);
@@ -55,6 +59,7 @@ public class TaskController {
     }
 
     @PatchMapping("/by-name/{name}")
+    @PreAuthorize("hasAuthority('update')")
     public ResponseEntity<TaskDto> patchTask(
             @PathVariable String name,
             @RequestBody TaskDto taskUpdates) {

@@ -15,6 +15,7 @@ import jakarta.validation.constraints.Size;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -30,22 +31,8 @@ public class CommentController {
     private final UserService userService;
     private final MappingUtils mappingUtils;
 
-//    @GetMapping
-//    public ResponseEntity<List<CommentDto>> getComment(
-//            @RequestParam @Size(min = 3, max = 255) String name) {
-//
-//        List<CommentEntity> comments = commentService.getComment(userService.getUser(name));
-//        if (comments == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        List<CommentDto> commentsDto = new ArrayList<>();
-//        for (CommentEntity comment : comments){
-//            commentsDto.add(mappingUtils.toDto(comment));
-//        }
-//        return ResponseEntity.ok().body(commentsDto);
-//    }
-
     @GetMapping
+    @PreAuthorize("hasAuthority('read')")
     public ResponseEntity<CommentDto> getComment(
             @RequestParam @Size(min = 3, max = 255) String authorName,
             @RequestParam @Size(min = 3, max = 255) String taskName,
@@ -56,6 +43,7 @@ public class CommentController {
 
 
     @PostMapping
+    @PreAuthorize("hasAuthority('create')")
     public ResponseEntity<CommentDto> addComment(
             @Valid @RequestBody @NonNull CommentDto comment,
             @RequestHeader("X-COMMENT-ID") String id
@@ -68,6 +56,7 @@ public class CommentController {
     }
 
     @DeleteMapping
+    @PreAuthorize("hasAuthority('delete')")
     public ResponseEntity<Void> removeComment(
             @RequestParam @Size(min = 3, max = 255) String authorName,
             @RequestParam @Size(min = 3, max = 255) String taskName,
@@ -79,6 +68,7 @@ public class CommentController {
     }
 
     @PatchMapping
+    @PreAuthorize("hasAuthority('update')")
     public ResponseEntity<CommentDto> patchComment(
             @RequestBody CommentDto commentUpdates) {
 

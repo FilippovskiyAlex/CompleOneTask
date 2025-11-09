@@ -1,6 +1,6 @@
 package com.example.TestTwo.model;
 
-import jakarta.validation.Valid;
+import com.example.TestTwo.model.enums.Status;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;

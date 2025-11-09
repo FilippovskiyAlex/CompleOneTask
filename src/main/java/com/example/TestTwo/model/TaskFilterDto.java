@@ -1,5 +1,6 @@
 package com.example.TestTwo.model;
 
+import com.example.TestTwo.model.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

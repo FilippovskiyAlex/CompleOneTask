@@ -12,6 +12,7 @@ import jakarta.validation.constraints.Size;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class ProjectController {
     private final MappingUtils mappingUtils;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('read')")
     public ResponseEntity<ProjectDto> getProject(
             @RequestParam @Size(min = 3, max = 255) String name) {
         ProjectEntity project = projectService.getProject(name);
@@ -38,6 +40,7 @@ public class ProjectController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('create')")
     public ResponseEntity<ProjectDto> addProject(
             @Valid @RequestBody @NonNull ProjectDto dto,
             @RequestHeader("X-PROJECT-ID") String id){
@@ -48,6 +51,7 @@ public class ProjectController {
     }
 
     @DeleteMapping("/by-name/{name}")
+    @PreAuthorize("hasAuthority('delete')")
     public ResponseEntity<Void> removeProject(
             @PathVariable String name){
         projectService.removeProject(name);
@@ -55,6 +59,7 @@ public class ProjectController {
     }
 
     @PatchMapping("/by-name/{name}")
+    @PreAuthorize("hasAuthority('update')")
     public ResponseEntity<ProjectDto> patchProject(
             @PathVariable String name,
             @RequestBody ProjectDto projectUpdates) {
