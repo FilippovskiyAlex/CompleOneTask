@@ -1,0 +1,80 @@
+name: CI/CD Pipeline
+
+on:
+  pull_request:
+    branches: [ main ]
+    types: [opened, synchronize, reopened]
+
+env:
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_PASS: ${{ secrets.DB_PASS }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+  KEY_STORE_PASS: ${{ secrets.KEY_STORE_PASS }}
+
+jobs:
+  mvn_test:
+    name: MVN Test
+    runs-on: ubuntu-latest
+    container:
+      image: maven:3.9-eclipse-temurin-21
+    services:
+      postgres:
+        env:
+          POSTGRES_DB: task_db_test
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASS }}
+        image: postgres:15
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "$KEYSTORE_BASE64" | base64 --decode > src/main/resources/MYTASKMAN.jks
+      - run: |
+          cat > src/main/resources/application.properties << EOF
+          spring.application.name=TestTwo
+          spring.datasource.url=jdbc:postgresql://postgres:5432/task_db_test
+          spring.datasource.username=${{ secrets.DB_USER }}
+          spring.datasource.password=${{ secrets.DB_PASS }}
+          spring.jpa.hibernate.ddl-auto=none
+          spring.jpa.show-sql=true
+          spring.jpa.properties.hibernate.format_sql=true
+          spring.sql.init.mode=always
+          spring.jpa.defer-datasource-initialization=true
+          spring.sql.init.platform=postgresql
+          server.port=8080
+          logging.level.org.springframework.security=DEBUG
+          logging.level.org.springframework.web=DEBUG
+          jwt.secret=${{ secrets.JWT_SECRET }}
+          jwt.accessExpiration=3600000
+          jwt.refreshExpiration=86400000
+          server.ssl.enabled=false 
+          server.ssl.key-store=classpath:MYTASKMAN.jks
+          server.ssl.key-store-type=JKS
+          server.ssl.key-store-password=${{ secrets.KEY_STORE_PASS }}
+          server.ssl.key-alias=MYTASKMAN
+          EOF
+      - run: apt-get update && apt-get install -y postgresql-client
+      - run: sleep 15
+      - run: mvn test
+
+  build:
+    name: Build
+    needs: mvn_test
+    runs-on: ubuntu-latest
+    container:
+      image: maven:3.9-eclipse-temurin-21
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "$KEYSTORE_BASE64" | base64 --decode > src/main/resources/MYTASKMAN.jks
+      - run: mvn clean package -DskipTests
+      - uses: actions/upload-artifact@v4
+        with:
+          name: java-app
+          path: target/*.jar
+          retention-days: 14
