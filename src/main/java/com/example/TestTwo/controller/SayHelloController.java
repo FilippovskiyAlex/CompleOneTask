@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SayHelloController {
 
     @GetMapping("/Hello/{name}")
-    @PreAuthorize("hasAuthority('read')")
+    //@PreAuthorize("hasAuthority('read')")
     public String HelloUser(@PathVariable String name) {
         return "Hello, " + name + "!";
     }
